@@ -1,12 +1,15 @@
-#include<SDL.h>
-#include<stdio.h>
-#include<stdbool.h>
+#include <SDL.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include "constans.h"
+#include "Snake.h"
 
 bool game_running = false;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+
+Snake snake;
 
 bool init();
 void setup();
@@ -75,7 +78,6 @@ bool init()
 
 void setup()
 {
-
 }
 
 void process_input()
@@ -110,6 +112,8 @@ void render()
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
 	SDL_RenderClear(renderer);
+
+	snake.render(renderer);
 
 	SDL_RenderPresent(renderer);
 }
