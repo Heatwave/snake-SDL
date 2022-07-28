@@ -3,12 +3,42 @@
 Snake::Snake()
 {
 	Pos head = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 };
-	body.push_back(head);
+	this->body.push_back(head);
 
-	for (size_t i = 0; i < 5; i++)
+	for (size_t i = 0; i < SNAKE_INIT_LENGTH; i++)
 	{
-		Pos pos = { body.back().x - SNAKE_WIDTH, head.y };
-		body.push_back(pos);
+		Pos pos = { this->body.back().x - SNAKE_SIZE, head.y };
+		this->body.push_back(pos);
+	}
+}
+
+void Snake::move()
+{
+	for (std::vector<Pos>::iterator it = this->body.end() - 1; it != this->body.begin(); --it)
+	{
+		Pos prev = *(it - 1);
+		(*it).x = prev.x;
+		(*it).y = prev.y;
+	}
+
+	int moveStep = SNAKE_SIZE;
+
+	switch (this->direction)
+	{
+	case UP:
+		this->body.front().y -= moveStep;
+		break;
+	case DOWN:
+		this->body.front().y += moveStep;
+		break;
+	case LEFT:
+		this->body.front().x -= moveStep;
+		break;
+	case RIGHT:
+		this->body.front().x += moveStep;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -16,9 +46,14 @@ void Snake::render(SDL_Renderer* renderer)
 {
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-	for (std::vector<Pos>::iterator it = body.begin(); it != body.end(); ++it)
+	for (std::vector<Pos>::iterator it = this->body.begin(); it != this->body.end(); ++it)
 	{
-		SDL_Rect rect = { (*it).x, (*it).y, SNAKE_WIDTH, SNAKE_HEIGHT };
+		SDL_Rect rect = { (*it).x, (*it).y, SNAKE_SIZE, SNAKE_SIZE };
 		SDL_RenderFillRect(renderer, &rect);
 	}
+}
+
+void Snake::setDirection(Direction direction)
+{
+	this->direction = direction;
 }

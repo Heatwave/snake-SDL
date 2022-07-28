@@ -4,7 +4,9 @@
 #include "constans.h"
 #include "Snake.h"
 
-bool game_running = false;
+bool gameRunning = false;
+
+int lastFrameTime = 0;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -20,11 +22,11 @@ void close();
 
 int main(int argc, char* args[])
 {
-	game_running = init();
+	gameRunning = init();
 
 	setup();
 
-	while (game_running == true)
+	while (gameRunning == true)
 	{
 		process_input();
 		update();
@@ -40,11 +42,11 @@ bool init()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		printf("SDL init failed! Error: %s\n", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL init failed! Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	printf("SDL init successed!\n");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "SDL init successed!\n");
 
 	window = SDL_CreateWindow(
 		"Snake",
@@ -57,27 +59,28 @@ bool init()
 
 	if (window == NULL)
 	{
-		printf("SDL_CreateWindow failed! Error: %s\n", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateWindow failed! Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	printf("window create successed!\n");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "window create successed!\n");
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	if (renderer == NULL)
 	{
-		printf("SDL_CreateRenderer failed! Error: %s\n", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateRenderer failed! Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	printf("renderer create successed!\n");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "renderer create successed!\n");
 
 	return true;
 }
 
 void setup()
 {
+	lastFrameTime = SDL_GetTicks();
 }
 
 void process_input()
@@ -88,12 +91,12 @@ void process_input()
 	switch (event.type)
 	{
 	case SDL_QUIT:
-		game_running = false;
+		gameRunning = false;
 		break;
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			game_running = false;
+			gameRunning = false;
 		}
 		break;
 	case SDL_KEYUP:
@@ -105,7 +108,20 @@ void process_input()
 
 void update()
 {
+	int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
+	if (time2wait > 0 && time2wait <= FRAME_TARGET_TIME)
+	{
+		//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "time2wait: %d\n", time2wait);
+		SDL_Delay(time2wait);
+	}
+
+	float deltaTime = (SDL_GetTicks() - lastFrameTime) / 1000.0f;
+	//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "delta_time: %f", deltaTime);
+
+	lastFrameTime = SDL_GetTicks();
+
+	snake.move();
 }
 
 void render()
