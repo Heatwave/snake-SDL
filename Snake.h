@@ -24,6 +24,10 @@ public:
 
 	void render(SDL_Renderer*);
 
+	Pos getHeadPos();
+
+	Direction getDirection();
+
 	void setDirection(Direction);
 private:
 	std::vector<Pos> body;

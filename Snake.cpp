@@ -53,6 +53,16 @@ void Snake::render(SDL_Renderer* renderer)
 	}
 }
 
+Pos Snake::getHeadPos()
+{
+	return this->body.front();
+}
+
+Direction Snake::getDirection()
+{
+	return this->direction;
+}
+
 void Snake::setDirection(Direction direction)
 {
 	this->direction = direction;

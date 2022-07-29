@@ -17,6 +17,7 @@ bool init();
 void setup();
 void process_input();
 void update();
+void check();
 void render();
 void close();
 
@@ -30,6 +31,7 @@ int main(int argc, char* args[])
 	{
 		process_input();
 		update();
+		check();
 		render();
 	}
 
@@ -99,19 +101,19 @@ void process_input()
 			gameRunning = false;
 		}
 
-		if (event.key.keysym.sym == SDLK_DOWN)
+		if (event.key.keysym.sym == SDLK_DOWN && snake.getDirection() != UP)
 		{
 			snake.setDirection(DOWN);
 		}
-		else if (event.key.keysym.sym == SDLK_UP)
+		else if (event.key.keysym.sym == SDLK_UP && snake.getDirection() != DOWN)
 		{
 			snake.setDirection(UP);
 		}
-		else if (event.key.keysym.sym == SDLK_LEFT)
+		else if (event.key.keysym.sym == SDLK_LEFT && snake.getDirection() != RIGHT)
 		{
 			snake.setDirection(LEFT);
 		}
-		else if (event.key.keysym.sym == SDLK_RIGHT)
+		else if (event.key.keysym.sym == SDLK_RIGHT && snake.getDirection() != LEFT)
 		{
 			snake.setDirection(RIGHT);
 		}
@@ -139,6 +141,19 @@ void update()
 	lastFrameTime = SDL_GetTicks();
 
 	snake.move();
+}
+
+void check()
+{
+	Pos head = snake.getHeadPos();
+
+	if (head.x >= WINDOW_WIDTH ||
+		head.x <= 0 ||
+		head.y >= WINDOW_HEIGHT ||
+		head.y <= 0)
+	{
+		gameRunning = false;
+	}
 }
 
 void render()
