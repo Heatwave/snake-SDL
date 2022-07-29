@@ -48,7 +48,7 @@ bool init()
 		return false;
 	}
 
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "SDL init successed!\n");
+	SDL_Log("SDL init successed!\n");
 
 	window = SDL_CreateWindow(
 		"Snake",
@@ -65,7 +65,7 @@ bool init()
 		return false;
 	}
 
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "window create successed!\n");
+	SDL_Log("window create successed!\n");
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -75,7 +75,7 @@ bool init()
 		return false;
 	}
 
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "renderer create successed!\n");
+	SDL_Log("renderer create successed!\n");
 
 	return true;
 }
@@ -118,8 +118,6 @@ void process_input()
 			snake.setDirection(RIGHT);
 		}
 		break;
-	case SDL_KEYUP:
-		break;
 	default:
 		break;
 	}
@@ -131,12 +129,12 @@ void update()
 
 	if (time2wait > 0 && time2wait <= FRAME_TARGET_TIME)
 	{
-		//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "time2wait: %d\n", time2wait);
+		//SDL_Log("time2wait: %d\n", time2wait);
 		SDL_Delay(time2wait);
 	}
 
 	float deltaTime = (SDL_GetTicks() - lastFrameTime) / 1000.0f;
-	//SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "delta_time: %f", deltaTime);
+	//SDL_Log("delta_time: %f", deltaTime);
 
 	lastFrameTime = SDL_GetTicks();
 
