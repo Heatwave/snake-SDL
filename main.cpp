@@ -98,6 +98,23 @@ void process_input()
 		{
 			gameRunning = false;
 		}
+
+		if (event.key.keysym.sym == SDLK_DOWN)
+		{
+			snake.setDirection(DOWN);
+		}
+		else if (event.key.keysym.sym == SDLK_UP)
+		{
+			snake.setDirection(UP);
+		}
+		else if (event.key.keysym.sym == SDLK_LEFT)
+		{
+			snake.setDirection(LEFT);
+		}
+		else if (event.key.keysym.sym == SDLK_RIGHT)
+		{
+			snake.setDirection(RIGHT);
+		}
 		break;
 	case SDL_KEYUP:
 		break;
