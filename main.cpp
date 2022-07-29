@@ -4,35 +4,38 @@
 #include "constans.h"
 #include "Snake.h"
 
-bool gameRunning = false;
-
-int lastFrameTime = 0;
-
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
-Snake snake;
-
 bool init();
-void setup();
-void process_input();
-void update();
-void check();
-void render();
+void gameLoop();
+void setup(Uint32&);
+bool waitingGameStartInput();
+void processInput(Snake&, bool&);
+void update(Snake&, Uint32&);
+void check(Snake&, bool&);
+void render(Snake&);
 void close();
 
 int main(int argc, char* args[])
 {
-	gameRunning = init();
-
-	setup();
-
-	while (gameRunning == true)
+	if (init() == false)
 	{
-		process_input();
-		update();
-		check();
-		render();
+		close();
+		return -1;
+	}
+
+	while (true)
+	{
+		bool startGame = waitingGameStartInput();
+		if (startGame == true)
+		{
+			gameLoop();
+		}
+		else
+		{
+			break;
+		}
 	}
 
 	close();
@@ -80,12 +83,60 @@ bool init()
 	return true;
 }
 
-void setup()
+bool waitingGameStartInput()
+{
+	SDL_Event event;
+
+	while (true)
+	{
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
+		SDL_RenderClear(renderer);
+
+		SDL_RenderPresent(renderer);
+
+		SDL_PollEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			return false;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				return false;
+			}
+			return true;
+		default:
+			break;
+		}
+
+		SDL_Delay(100);
+	}
+}
+
+void gameLoop()
+{
+	Snake snake;
+	bool gameRunning = true;
+	Uint32 lastFrameTime = 0;
+
+	setup(lastFrameTime);
+
+	while (gameRunning == true)
+	{
+		processInput(snake, gameRunning);
+		update(snake, lastFrameTime);
+		check(snake, gameRunning);
+		render(snake);
+	}
+}
+
+void setup(Uint32& lastFrameTime)
 {
 	lastFrameTime = SDL_GetTicks();
 }
 
-void process_input()
+void processInput(Snake& snake, bool& gameRunning)
 {
 	SDL_Event event;
 	SDL_PollEvent(&event);
@@ -123,7 +174,7 @@ void process_input()
 	}
 }
 
-void update()
+void update(Snake& snake, Uint32& lastFrameTime)
 {
 	int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
@@ -141,7 +192,7 @@ void update()
 	snake.move();
 }
 
-void check()
+void check(Snake& snake, bool& gameRunning)
 {
 	Pos head = snake.getHeadPos();
 
@@ -154,7 +205,7 @@ void check()
 	}
 }
 
-void render()
+void render(Snake& snake)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
 	SDL_RenderClear(renderer);
@@ -166,5 +217,7 @@ void render()
 
 void close()
 {
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
