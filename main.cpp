@@ -12,6 +12,7 @@ TTF_Font* font = NULL;
 bool init();
 void gameLoop();
 void setup(Uint32&);
+void showHintMessage();
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Uint32&);
@@ -27,27 +28,9 @@ int main(int argc, char* args[])
 		return -1;
 	}
 
-	SDL_Texture* message;
-	SDL_Rect messageRect;
-
-	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
-
-	SDL_Surface* text = TTF_RenderUTF8_Solid(font, "Press any key to start", white);
-
-	messageRect.x = (WINDOW_WIDTH - text->w) / 2;
-	messageRect.y = (WINDOW_HEIGHT - text->h) / 2;
-	messageRect.w = text->w;
-	messageRect.h = text->h;
-	message = SDL_CreateTextureFromSurface(renderer, text);
-
 	while (true)
 	{
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
-		SDL_RenderClear(renderer);
-
-		SDL_RenderCopy(renderer, message, NULL, &messageRect);
-		SDL_RenderPresent(renderer);
-
+		showHintMessage();
 		bool startGame = waitingGameStartInput();
 		if (startGame == true)
 		{
@@ -58,9 +41,6 @@ int main(int argc, char* args[])
 			break;
 		}
 	}
-
-	SDL_FreeSurface(text);
-	SDL_DestroyTexture(message);
 
 	close();
 
@@ -124,6 +104,31 @@ bool init()
 	TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
 
 	return true;
+}
+
+void showHintMessage()
+{ 
+	SDL_Texture* message;
+	SDL_Rect messageRect;
+
+	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+
+	SDL_Surface* text = TTF_RenderUTF8_Solid(font, "Press any key to start", white);
+
+	messageRect.x = (WINDOW_WIDTH - text->w) / 2;
+	messageRect.y = (WINDOW_HEIGHT - text->h) / 2;
+	messageRect.w = text->w;
+	messageRect.h = text->h;
+	message = SDL_CreateTextureFromSurface(renderer, text);
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
+	SDL_RenderClear(renderer);
+
+	SDL_RenderCopy(renderer, message, NULL, &messageRect);
+	SDL_RenderPresent(renderer);
+
+	SDL_FreeSurface(text);
+	SDL_DestroyTexture(message);
 }
 
 bool waitingGameStartInput()
@@ -255,6 +260,9 @@ void render(Snake& snake)
 
 void close()
 {
+	TTF_CloseFont(font);
+	TTF_Quit();
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
