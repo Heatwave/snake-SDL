@@ -12,11 +12,11 @@ TTF_Font* font = NULL;
 bool init();
 void gameLoop();
 void setup(Uint32&);
-void showHintMessage();
+void showMessage(const char*);
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Uint32&);
-void check(Snake&, bool&);
+bool check(Snake&, bool&);
 void render(Snake&);
 void close();
 
@@ -30,7 +30,7 @@ int main(int argc, char* args[])
 
 	while (true)
 	{
-		showHintMessage();
+		showMessage("Press any key to start");
 		bool startGame = waitingGameStartInput();
 		if (startGame == true)
 		{
@@ -106,29 +106,29 @@ bool init()
 	return true;
 }
 
-void showHintMessage()
+void showMessage(const char* message)
 { 
-	SDL_Texture* message;
+	SDL_Texture* messageTexture;
 	SDL_Rect messageRect;
 
 	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
 
-	SDL_Surface* text = TTF_RenderUTF8_Solid(font, "Press any key to start", white);
+	SDL_Surface* text = TTF_RenderUTF8_Solid(font, message, white);
 
 	messageRect.x = (WINDOW_WIDTH - text->w) / 2;
 	messageRect.y = (WINDOW_HEIGHT - text->h) / 2;
 	messageRect.w = text->w;
 	messageRect.h = text->h;
-	message = SDL_CreateTextureFromSurface(renderer, text);
+	messageTexture = SDL_CreateTextureFromSurface(renderer, text);
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
 	SDL_RenderClear(renderer);
 
-	SDL_RenderCopy(renderer, message, NULL, &messageRect);
+	SDL_RenderCopy(renderer, messageTexture, NULL, &messageRect);
 	SDL_RenderPresent(renderer);
 
 	SDL_FreeSurface(text);
-	SDL_DestroyTexture(message);
+	SDL_DestroyTexture(messageTexture);
 }
 
 bool waitingGameStartInput()
@@ -162,6 +162,7 @@ void gameLoop()
 	Snake snake;
 	bool gameRunning = true;
 	Uint32 lastFrameTime = 0;
+	bool lose = false;
 
 	setup(lastFrameTime);
 
@@ -169,8 +170,14 @@ void gameLoop()
 	{
 		processInput(snake, gameRunning);
 		update(snake, lastFrameTime);
-		check(snake, gameRunning);
+		lose =  check(snake, gameRunning);
 		render(snake);
+	}
+
+	if (lose == true)
+	{
+		showMessage("You lose!");
+		SDL_Delay(3000);
 	}
 }
 
@@ -235,7 +242,7 @@ void update(Snake& snake, Uint32& lastFrameTime)
 	snake.move();
 }
 
-void check(Snake& snake, bool& gameRunning)
+bool check(Snake& snake, bool& gameRunning)
 {
 	Pos head = snake.getHeadPos();
 
@@ -245,7 +252,10 @@ void check(Snake& snake, bool& gameRunning)
 		head.y <= 0)
 	{
 		gameRunning = false;
+		return true;
 	}
+
+	return false;
 }
 
 void render(Snake& snake)
