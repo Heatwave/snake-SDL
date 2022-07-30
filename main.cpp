@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "constans.h"
@@ -6,6 +7,7 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+TTF_Font* font = NULL;
 
 bool init();
 void gameLoop();
@@ -79,6 +81,25 @@ bool init()
 	}
 
 	SDL_Log("renderer create successed!\n");
+
+	if (TTF_Init() != 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TTF_Init failed! Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	font = TTF_OpenFont(FONT_FILE_NAME, FONT_SIZE_PT);
+	if (font == NULL)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %d pt font from %s: %s\n",
+			FONT_SIZE_PT, FONT_FILE_NAME, SDL_GetError());
+		return false;
+	}
+
+	TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
+	TTF_SetFontOutline(font, 0);
+	TTF_SetFontKerning(font, 1);
+	TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
 
 	return true;
 }
