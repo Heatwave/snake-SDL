@@ -5,13 +5,14 @@
 #include <SDL.h>
 #include <vector>
 #include "constans.h"
+#include "utils.h"
 
 #define SNAKE_WIDTH 10
 #define SNAKE_HEIGHT 10
 
 #define SNAKE_SIZE 10
 
-#define SNAKE_INIT_LENGTH 5
+#define SNAKE_INIT_LENGTH 20
 
 #define SNAKE_VELOCITY 200
 
@@ -23,6 +24,8 @@ public:
 	void move();
 
 	void render(SDL_Renderer*);
+
+	bool checkHeadBodyCollision();
 
 	Pos getHeadPos();
 

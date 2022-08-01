@@ -255,6 +255,12 @@ bool check(Snake& snake, bool& gameRunning)
 		return true;
 	}
 
+	if (snake.checkHeadBodyCollision() == true)
+	{
+		gameRunning = false;
+		return true;
+	}
+
 	return false;
 }
 
