@@ -8,3 +8,13 @@ bool checkPosOverlap(Pos src, Pos dst)
 	}
 	return false;
 }
+
+int floorInt(int num, int base)
+{
+	int modNum = num % base;
+	if (modNum == 0)
+	{
+		return num;
+	}
+	return num - modNum;
+}

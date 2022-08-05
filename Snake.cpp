@@ -53,6 +53,18 @@ void Snake::render(SDL_Renderer* renderer)
 	}
 }
 
+bool Snake::checkCollision(Pos pos)
+{
+	for (std::vector<Pos>::iterator it = this->body.begin(); it != this->body.end(); ++it)
+	{
+		if (checkPosOverlap(pos, *it) == true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Snake::checkHeadBodyCollision()
 {
 	Pos head = this->getHeadPos();

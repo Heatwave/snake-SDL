@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "constans.h"
 #include "Snake.h"
+#include "Target.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -17,7 +18,7 @@ bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Uint32&);
 bool check(Snake&, bool&);
-void render(Snake&);
+void render(Snake&, Target&);
 void close();
 
 int main(int argc, char* args[])
@@ -160,6 +161,8 @@ bool waitingGameStartInput()
 void gameLoop()
 {
 	Snake snake;
+	Target target(&snake);
+
 	bool gameRunning = true;
 	Uint32 lastFrameTime = 0;
 	bool lose = false;
@@ -171,7 +174,7 @@ void gameLoop()
 		processInput(snake, gameRunning);
 		update(snake, lastFrameTime);
 		lose =  check(snake, gameRunning);
-		render(snake);
+		render(snake, target);
 	}
 
 	if (lose == true)
@@ -264,12 +267,13 @@ bool check(Snake& snake, bool& gameRunning)
 	return false;
 }
 
-void render(Snake& snake)
+void render(Snake& snake, Target& target)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
 	SDL_RenderClear(renderer);
 
 	snake.render(renderer);
+	target.render(renderer);
 
 	SDL_RenderPresent(renderer);
 }

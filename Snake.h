@@ -25,6 +25,8 @@ public:
 
 	void render(SDL_Renderer*);
 
+	bool checkCollision(Pos pos);
+
 	bool checkHeadBodyCollision();
 
 	Pos getHeadPos();
