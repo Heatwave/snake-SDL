@@ -12,6 +12,8 @@ class Target
 public:
 	Target(Snake*);
 
+	Pos getPos();
+
 	void randomPos();
 
 	bool checkPosValid();

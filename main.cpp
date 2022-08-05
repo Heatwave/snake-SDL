@@ -17,7 +17,7 @@ void showMessage(const char*);
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Uint32&);
-bool check(Snake&, bool&);
+bool check(Snake&, Target&, bool&);
 void render(Snake&, Target&);
 void close();
 
@@ -108,7 +108,7 @@ bool init()
 }
 
 void showMessage(const char* message)
-{ 
+{
 	SDL_Texture* messageTexture;
 	SDL_Rect messageRect;
 
@@ -173,7 +173,7 @@ void gameLoop()
 	{
 		processInput(snake, gameRunning);
 		update(snake, lastFrameTime);
-		lose =  check(snake, gameRunning);
+		lose = check(snake, target, gameRunning);
 		render(snake, target);
 	}
 
@@ -245,7 +245,7 @@ void update(Snake& snake, Uint32& lastFrameTime)
 	snake.move();
 }
 
-bool check(Snake& snake, bool& gameRunning)
+bool check(Snake& snake, Target& target, bool& gameRunning)
 {
 	Pos head = snake.getHeadPos();
 
@@ -262,6 +262,11 @@ bool check(Snake& snake, bool& gameRunning)
 	{
 		gameRunning = false;
 		return true;
+	}
+
+	if (checkPosOverlap(target.getPos(), snake.getHeadPos()) == true)
+	{
+		target.randomPos();
 	}
 
 	return false;

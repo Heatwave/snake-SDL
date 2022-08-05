@@ -8,6 +8,11 @@ Target::Target(Snake* snake)
 	randomPos();
 }
 
+Pos Target::getPos()
+{
+	return this->pos;
+}
+
 void Target::randomPos()
 {
 	this->pos.x = floorInt(rand() % WINDOW_WIDTH, SNAKE_SIZE);
