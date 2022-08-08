@@ -25,11 +25,15 @@ public:
 
 	void render(SDL_Renderer*);
 
-	bool checkCollision(Pos pos);
+	bool checkCollision(Pos);
 
 	bool checkHeadBodyCollision();
 
+	void appendHead(Pos);
+
 	Pos getHeadPos();
+
+	Pos getHeadNextPos();
 
 	Direction getDirection();
 

@@ -21,25 +21,9 @@ void Snake::move()
 		(*it).y = prev.y;
 	}
 
-	int moveStep = SNAKE_SIZE;
-
-	switch (this->direction)
-	{
-	case UP:
-		this->body.front().y -= moveStep;
-		break;
-	case DOWN:
-		this->body.front().y += moveStep;
-		break;
-	case LEFT:
-		this->body.front().x -= moveStep;
-		break;
-	case RIGHT:
-		this->body.front().x += moveStep;
-		break;
-	default:
-		break;
-	}
+	Pos headNext = this->getHeadNextPos();
+	this->body.front().x = headNext.x;
+	this->body.front().y = headNext.y;
 }
 
 void Snake::render(SDL_Renderer* renderer)
@@ -78,9 +62,43 @@ bool Snake::checkHeadBodyCollision()
 	return false;
 }
 
+void Snake::appendHead(Pos newHeadPos)
+{
+	Pos newHead = { newHeadPos.x, newHeadPos.y };
+	this->body.insert(this->body.begin(), newHead);
+	return;
+}
+
 Pos Snake::getHeadPos()
 {
 	return this->body.front();
+}
+
+Pos Snake::getHeadNextPos()
+{
+	Pos head = this->getHeadPos();
+
+	int moveStep = SNAKE_SIZE;
+
+	switch (this->direction)
+	{
+	case UP:
+		head.y -= moveStep;
+		break;
+	case DOWN:
+		head.y += moveStep;
+		break;
+	case LEFT:
+		head.x -= moveStep;
+		break;
+	case RIGHT:
+		head.x += moveStep;
+		break;
+	default:
+		break;
+	}
+
+	return head;
 }
 
 Direction Snake::getDirection()

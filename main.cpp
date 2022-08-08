@@ -16,8 +16,8 @@ void setup(Uint32&);
 void showMessage(const char*);
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
-void update(Snake&, Uint32&);
-bool check(Snake&, Target&, bool&);
+void update(Snake&, Target&, Uint32&);
+bool check(Snake&, bool&);
 void render(Snake&, Target&);
 void close();
 
@@ -172,8 +172,8 @@ void gameLoop()
 	while (gameRunning == true)
 	{
 		processInput(snake, gameRunning);
-		update(snake, lastFrameTime);
-		lose = check(snake, target, gameRunning);
+		update(snake, target, lastFrameTime);
+		lose = check(snake, gameRunning);
 		render(snake, target);
 	}
 
@@ -227,7 +227,7 @@ void processInput(Snake& snake, bool& gameRunning)
 	}
 }
 
-void update(Snake& snake, Uint32& lastFrameTime)
+void update(Snake& snake, Target& target, Uint32& lastFrameTime)
 {
 	int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
@@ -242,10 +242,18 @@ void update(Snake& snake, Uint32& lastFrameTime)
 
 	lastFrameTime = SDL_GetTicks();
 
-	snake.move();
+	if (checkPosOverlap(snake.getHeadNextPos(), target.getPos()) == true)
+	{
+		snake.appendHead(target.getPos());
+		target.randomPos();
+	}
+	else
+	{
+		snake.move();
+	}
 }
 
-bool check(Snake& snake, Target& target, bool& gameRunning)
+bool check(Snake& snake, bool& gameRunning)
 {
 	Pos head = snake.getHeadPos();
 
@@ -262,11 +270,6 @@ bool check(Snake& snake, Target& target, bool& gameRunning)
 	{
 		gameRunning = false;
 		return true;
-	}
-
-	if (checkPosOverlap(target.getPos(), snake.getHeadPos()) == true)
-	{
-		target.randomPos();
 	}
 
 	return false;
