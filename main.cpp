@@ -134,6 +134,9 @@ void showMessage(const char* message)
 
 bool waitingGameStartInput()
 {
+	SDL_PumpEvents();
+	SDL_FlushEvent(SDL_KEYDOWN);
+
 	SDL_Event event;
 
 	while (true)
