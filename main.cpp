@@ -5,6 +5,7 @@
 #include "constans.h"
 #include "Snake.h"
 #include "Target.h"
+#include "utils.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -13,7 +14,6 @@ TTF_Font* font = NULL;
 bool init();
 void gameLoop();
 void setup(Uint32&);
-void showMessage(const char*);
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Target&, Uint32&);
@@ -31,7 +31,7 @@ int main(int argc, char* args[])
 
 	while (true)
 	{
-		showMessage("Press any key to start");
+		showMessage("Press any key to start", true, renderer, font);
 		bool startGame = waitingGameStartInput();
 		if (startGame == true)
 		{
@@ -107,31 +107,6 @@ bool init()
 	return true;
 }
 
-void showMessage(const char* message)
-{
-	SDL_Texture* messageTexture;
-	SDL_Rect messageRect;
-
-	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
-
-	SDL_Surface* text = TTF_RenderUTF8_Solid(font, message, white);
-
-	messageRect.x = (WINDOW_WIDTH - text->w) / 2;
-	messageRect.y = (WINDOW_HEIGHT - text->h) / 2;
-	messageRect.w = text->w;
-	messageRect.h = text->h;
-	messageTexture = SDL_CreateTextureFromSurface(renderer, text);
-
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
-	SDL_RenderClear(renderer);
-
-	SDL_RenderCopy(renderer, messageTexture, NULL, &messageRect);
-	SDL_RenderPresent(renderer);
-
-	SDL_FreeSurface(text);
-	SDL_DestroyTexture(messageTexture);
-}
-
 bool waitingGameStartInput()
 {
 	SDL_PumpEvents();
@@ -182,7 +157,7 @@ void gameLoop()
 
 	if (lose == true)
 	{
-		showMessage("You lose!");
+		showMessage("You lose!", false, renderer, font);
 		SDL_Delay(3000);
 	}
 }
