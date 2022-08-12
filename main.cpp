@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <cstdio>
-#include "constans.h"
+#include "constants.h"
 #include "Snake.h"
 #include "Target.h"
 #include "utils.h"

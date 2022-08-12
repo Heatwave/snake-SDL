@@ -139,7 +139,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constans.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="Target.h" />

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CONSTANS_H
-#define CONSTANS_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -24,4 +24,4 @@ enum Direction
 	RIGHT
 };
 
-#endif // !CONSTANS_H
+#endif // !CONSTANTS_H

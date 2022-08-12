@@ -32,7 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constans.h">
+    <ClInclude Include="constants.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Snake.h">
