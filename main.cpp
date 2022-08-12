@@ -6,6 +6,7 @@
 #include "Snake.h"
 #include "Target.h"
 #include "utils.h"
+#include "Score.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -16,7 +17,7 @@ void gameLoop();
 void setup(Uint32&);
 bool waitingGameStartInput();
 void processInput(Snake&, bool&);
-void update(Snake&, Target&, Uint32&);
+void update(Snake&, Target&, Score&, Uint32&);
 bool check(Snake&, bool&);
 void render(Snake&, Target&);
 void close();
@@ -140,6 +141,7 @@ void gameLoop()
 {
 	Snake snake;
 	Target target(&snake);
+	Score score;
 
 	bool gameRunning = true;
 	Uint32 lastFrameTime = 0;
@@ -150,14 +152,16 @@ void gameLoop()
 	while (gameRunning == true)
 	{
 		processInput(snake, gameRunning);
-		update(snake, target, lastFrameTime);
+		update(snake, target, score, lastFrameTime);
 		lose = check(snake, gameRunning);
 		render(snake, target);
 	}
 
 	if (lose == true)
 	{
-		showMessage("You lose!", false, renderer, font);
+		char str[50];
+		snprintf(str, 50, "Your score: %d", score.getScore());
+		showMessage(str, false, renderer, font);
 		SDL_Delay(3000);
 	}
 }
@@ -205,7 +209,7 @@ void processInput(Snake& snake, bool& gameRunning)
 	}
 }
 
-void update(Snake& snake, Target& target, Uint32& lastFrameTime)
+void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 {
 	int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
@@ -224,6 +228,7 @@ void update(Snake& snake, Target& target, Uint32& lastFrameTime)
 	{
 		snake.appendHead(target.getPos());
 		target.randomPos();
+		score.incrementScore();
 	}
 	else
 	{

@@ -12,7 +12,7 @@
 
 #define SNAKE_SIZE 10
 
-#define SNAKE_INIT_LENGTH 20
+#define SNAKE_INIT_LENGTH 5
 
 #define SNAKE_VELOCITY 200
 
