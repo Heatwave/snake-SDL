@@ -4,7 +4,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include "constans.h"
+#include "constants.h"
 
 bool checkPosOverlap(Pos, Pos);
 int floorInt(int, int);

@@ -4,7 +4,7 @@
 
 #include <SDL.h>
 #include <vector>
-#include "constans.h"
+#include "constants.h"
 
 #define SNAKE_WIDTH 10
 #define SNAKE_HEIGHT 10

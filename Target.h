@@ -3,7 +3,7 @@
 #define TARGET
 
 #include <SDL.h>
-#include "constans.h"
+#include "constants.h"
 #include "Snake.h"
 
 class Target
