@@ -1,8 +1,9 @@
 #include "Snake.h"
+#include "utils.h"
 
 Snake::Snake()
 {
-	Pos head = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 };
+	constexpr Pos head = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 };
 	this->body.push_back(head);
 
 	for (size_t i = 0; i < SNAKE_INIT_LENGTH; i++)
@@ -14,23 +15,23 @@ Snake::Snake()
 
 void Snake::move()
 {
-	for (std::vector<Pos>::iterator it = this->body.end() - 1; it != this->body.begin(); --it)
+	for (auto it = this->body.end() - 1; it != this->body.begin(); --it)
 	{
-		Pos prev = *(it - 1);
+		const Pos prev = *(it - 1);
 		(*it).x = prev.x;
 		(*it).y = prev.y;
 	}
 
-	Pos headNext = this->getHeadNextPos();
+	const Pos headNext = this->getHeadNextPos();
 	this->body.front().x = headNext.x;
 	this->body.front().y = headNext.y;
 }
 
-void Snake::render(SDL_Renderer* renderer)
+void Snake::render(SDL_Renderer* renderer) const
 {
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-	for (std::vector<Pos>::iterator it = this->body.begin(); it != this->body.end(); ++it)
+	for (auto it = this->body.begin(); it != this->body.end(); ++it)
 	{
 		SDL_Rect rect = { (*it).x, (*it).y, SNAKE_SIZE, SNAKE_SIZE };
 		SDL_RenderFillRect(renderer, &rect);
@@ -39,7 +40,7 @@ void Snake::render(SDL_Renderer* renderer)
 
 bool Snake::checkCollision(Pos pos)
 {
-	for (std::vector<Pos>::iterator it = this->body.begin(); it != this->body.end(); ++it)
+	for (auto it = this->body.begin(); it != this->body.end(); ++it)
 	{
 		if (checkPosOverlap(pos, *it) == true)
 		{
@@ -51,8 +52,8 @@ bool Snake::checkCollision(Pos pos)
 
 bool Snake::checkHeadBodyCollision()
 {
-	Pos head = this->getHeadPos();
-	for (std::vector<Pos>::iterator it = this->body.begin() + 1; it != this->body.end(); ++it)
+	const Pos head = this->getHeadPos();
+	for (auto it = this->body.begin() + 1; it != this->body.end(); ++it)
 	{
 		if (checkPosOverlap(head, *it) == true)
 		{
@@ -64,21 +65,20 @@ bool Snake::checkHeadBodyCollision()
 
 void Snake::appendHead(Pos newHeadPos)
 {
-	Pos newHead = { newHeadPos.x, newHeadPos.y };
+	const Pos newHead = { newHeadPos.x, newHeadPos.y };
 	this->body.insert(this->body.begin(), newHead);
-	return;
 }
 
-Pos Snake::getHeadPos()
+Pos Snake::getHeadPos() const
 {
 	return this->body.front();
 }
 
-Pos Snake::getHeadNextPos()
+Pos Snake::getHeadNextPos() const
 {
 	Pos head = this->getHeadPos();
 
-	int moveStep = SNAKE_SIZE;
+	constexpr int moveStep = SNAKE_SIZE;
 
 	switch (this->direction)
 	{
@@ -94,19 +94,17 @@ Pos Snake::getHeadNextPos()
 	case RIGHT:
 		head.x += moveStep;
 		break;
-	default:
-		break;
 	}
 
 	return head;
 }
 
-Direction Snake::getDirection()
+Direction Snake::getDirection() const
 {
 	return this->direction;
 }
 
-void Snake::setDirection(Direction direction)
+void Snake::setDirection(const Direction dire)
 {
-	this->direction = direction;
+	this->direction = dire;
 }

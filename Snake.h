@@ -5,7 +5,6 @@
 #include <SDL.h>
 #include <vector>
 #include "constans.h"
-#include "utils.h"
 
 #define SNAKE_WIDTH 10
 #define SNAKE_HEIGHT 10
@@ -23,7 +22,7 @@ public:
 
 	void move();
 
-	void render(SDL_Renderer*);
+	void render(SDL_Renderer*) const;
 
 	bool checkCollision(Pos);
 
@@ -31,11 +30,11 @@ public:
 
 	void appendHead(Pos);
 
-	Pos getHeadPos();
+	Pos getHeadPos() const;
 
-	Pos getHeadNextPos();
+	Pos getHeadNextPos() const;
 
-	Direction getDirection();
+	Direction getDirection() const;
 
 	void setDirection(Direction);
 private:

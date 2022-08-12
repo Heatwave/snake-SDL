@@ -1,16 +1,15 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <stdio.h>
-#include <stdbool.h>
+#include <cstdio>
 #include "constans.h"
 #include "Snake.h"
 #include "Target.h"
 #include "utils.h"
 #include "Score.h"
 
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-TTF_Font* font = NULL;
+SDL_Window* window = nullptr;
+SDL_Renderer* renderer = nullptr;
+TTF_Font* font = nullptr;
 
 bool init();
 void gameLoop();
@@ -19,7 +18,7 @@ bool waitingGameStartInput();
 void processInput(Snake&, bool&);
 void update(Snake&, Target&, Score&, Uint32&);
 bool check(Snake&, bool&);
-void render(Snake&, Target&);
+void render(const Snake&, const Target&);
 void close();
 
 int main(int argc, char* args[])
@@ -33,8 +32,7 @@ int main(int argc, char* args[])
 	while (true)
 	{
 		showMessage("Press any key to start", true, renderer, font);
-		bool startGame = waitingGameStartInput();
-		if (startGame == true)
+		if (waitingGameStartInput() == true)
 		{
 			gameLoop();
 		}
@@ -57,7 +55,7 @@ bool init()
 		return false;
 	}
 
-	SDL_Log("SDL init successed!\n");
+	SDL_Log("SDL init succeeded!\n");
 
 	window = SDL_CreateWindow(
 		"Snake",
@@ -68,23 +66,23 @@ bool init()
 		SDL_WINDOW_SHOWN
 	);
 
-	if (window == NULL)
+	if (window == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateWindow failed! Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	SDL_Log("window create successed!\n");
+	SDL_Log("window create succeeded!\n");
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	if (renderer == NULL)
+	if (renderer == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateRenderer failed! Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	SDL_Log("renderer create successed!\n");
+	SDL_Log("renderer create succeeded!\n");
 
 	if (TTF_Init() != 0)
 	{
@@ -93,7 +91,7 @@ bool init()
 	}
 
 	font = TTF_OpenFont(FONT_FILE_NAME, FONT_SIZE_PT);
-	if (font == NULL)
+	if (font == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %d pt font from %s: %s\n",
 			FONT_SIZE_PT, FONT_FILE_NAME, SDL_GetError());
@@ -211,7 +209,7 @@ void processInput(Snake& snake, bool& gameRunning)
 
 void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 {
-	int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
+	const int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
 	if (time2wait > 0 && time2wait <= FRAME_TARGET_TIME)
 	{
@@ -219,7 +217,7 @@ void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 		SDL_Delay(time2wait);
 	}
 
-	float deltaTime = (SDL_GetTicks() - lastFrameTime) / 1000.0f;
+	// float deltaTime = (SDL_GetTicks() - lastFrameTime) / 1000.0f;
 	//SDL_Log("delta_time: %f", deltaTime);
 
 	lastFrameTime = SDL_GetTicks();
@@ -238,7 +236,7 @@ void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 
 bool check(Snake& snake, bool& gameRunning)
 {
-	Pos head = snake.getHeadPos();
+	const Pos head = snake.getHeadPos();
 
 	if (head.x >= WINDOW_WIDTH ||
 		head.x <= 0 ||
@@ -258,7 +256,7 @@ bool check(Snake& snake, bool& gameRunning)
 	return false;
 }
 
-void render(Snake& snake, Target& target)
+void render(const Snake& snake, const Target& target)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
 	SDL_RenderClear(renderer);

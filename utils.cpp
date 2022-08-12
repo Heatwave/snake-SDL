@@ -11,7 +11,7 @@ bool checkPosOverlap(Pos src, Pos dst)
 
 int floorInt(int num, int base)
 {
-	int modNum = num % base;
+	const int modNum = num % base;
 	if (modNum == 0)
 	{
 		return num;
@@ -21,10 +21,9 @@ int floorInt(int num, int base)
 
 void showMessage(const char* message, bool clear, SDL_Renderer* renderer, TTF_Font* font)
 {
-	SDL_Texture* messageTexture;
 	SDL_Rect messageRect;
 
-	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+	constexpr SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
 
 	SDL_Surface* text = TTF_RenderUTF8_Solid(font, message, white);
 
@@ -32,7 +31,7 @@ void showMessage(const char* message, bool clear, SDL_Renderer* renderer, TTF_Fo
 	messageRect.y = (WINDOW_HEIGHT - text->h) / 2;
 	messageRect.w = text->w;
 	messageRect.h = text->h;
-	messageTexture = SDL_CreateTextureFromSurface(renderer, text);
+	SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, text);
 
 	if (clear == true)
 	{
@@ -40,7 +39,7 @@ void showMessage(const char* message, bool clear, SDL_Renderer* renderer, TTF_Fo
 		SDL_RenderClear(renderer);
 	}
 
-	SDL_RenderCopy(renderer, messageTexture, NULL, &messageRect);
+	SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
 	SDL_RenderPresent(renderer);
 
 	SDL_FreeSurface(text);

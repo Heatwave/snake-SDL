@@ -4,7 +4,6 @@
 
 #include <SDL.h>
 #include "constans.h"
-#include "utils.h"
 #include "Snake.h"
 
 class Target
@@ -12,16 +11,16 @@ class Target
 public:
 	Target(Snake*);
 
-	Pos getPos();
+	Pos getPos() const;
 
 	void randomPos();
 
-	void render(SDL_Renderer*);
+	void render(SDL_Renderer*) const;
 private:
-	Pos pos;
+	Pos pos{};
 	Snake* snake;
 
-	bool checkPosValid();
+	bool checkPosValid() const;
 };
 
 #endif // !TARGET_H

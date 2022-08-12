@@ -1,4 +1,5 @@
 #include "Target.h"
+#include "utils.h"
 
 Target::Target(Snake* snake)
 {
@@ -8,7 +9,7 @@ Target::Target(Snake* snake)
 	randomPos();
 }
 
-Pos Target::getPos()
+Pos Target::getPos() const
 {
 	return this->pos;
 }
@@ -23,7 +24,7 @@ void Target::randomPos()
 	}
 }
 
-bool Target::checkPosValid()
+bool Target::checkPosValid() const
 {
 	if (this->pos.x == 0 || this->pos.x >= WINDOW_WIDTH)
 	{
@@ -40,11 +41,11 @@ bool Target::checkPosValid()
 	return true;
 }
 
-void Target::render(SDL_Renderer* renderer)
+void Target::render(SDL_Renderer* renderer) const
 {
 
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-	SDL_Rect rect = { this->pos.x, this->pos.y, SNAKE_SIZE, SNAKE_SIZE };
+	const SDL_Rect rect = { this->pos.x, this->pos.y, SNAKE_SIZE, SNAKE_SIZE };
 	SDL_RenderFillRect(renderer, &rect);
 }
