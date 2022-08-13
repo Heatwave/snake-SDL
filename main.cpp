@@ -6,6 +6,7 @@
 #include "Target.h"
 #include "utils.h"
 #include "Score.h"
+#include "Menu.h"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -14,7 +15,7 @@ TTF_Font* font = nullptr;
 bool init();
 void gameLoop();
 void setup(Uint32&);
-bool waitingGameStartInput();
+void waitingMenuSelection(Menu&);
 void processInput(Snake&, bool&);
 void update(Snake&, Target&, Score&, Uint32&);
 bool check(Snake&, bool&);
@@ -29,15 +30,24 @@ int main(int argc, char* args[])
 		return -1;
 	}
 
-	while (true)
+	bool exit = false;
+
+	while (exit == false)
 	{
-		showMessage("Press any key to start", true, renderer, font);
-		if (waitingGameStartInput() == true)
+		Menu menu;
+		menu.render(renderer, font);
+
+		waitingMenuSelection(menu);
+
+		switch (menu.getCurrentSelection())  // NOLINT(clang-diagnostic-switch-enum)
 		{
+		case MENU_START_GAME:
 			gameLoop();
-		}
-		else
-		{
+			break;
+		case MENU_HIGH_SCORES:
+			break;
+		default:
+			exit = true;
 			break;
 		}
 	}
@@ -106,7 +116,7 @@ bool init()
 	return true;
 }
 
-bool waitingGameStartInput()
+void waitingMenuSelection(Menu& menu)
 {
 	SDL_PumpEvents();
 	SDL_FlushEvent(SDL_KEYDOWN);
@@ -120,18 +130,34 @@ bool waitingGameStartInput()
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			return false;
+			menu.setCurrentSelection(MENU_EXIT);
+			return;
 		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_RETURN)
+			{
+				return;
+			}
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				return false;
+				menu.setCurrentSelection(MENU_EXIT);
+				return;
 			}
-			return true;
+			if (event.key.keysym.sym == SDLK_UP)
+			{
+				menu.select(-1);
+				break;
+			}
+			if (event.key.keysym.sym == SDLK_DOWN)
+			{
+				menu.select(1);
+				break;
+			}
+			break;
 		default:
 			break;
 		}
 
-		SDL_Delay(100);
+		menu.render(renderer, font);
 	}
 }
 
@@ -158,7 +184,7 @@ void gameLoop()
 	if (lose == true)
 	{
 		char str[50];
-		snprintf(str, 50, "Your score: %d", score.getScore());
+		snprintf(str, 50, "Your score: %d", score.getScore());  // NOLINT(cert-err33-c)
 		showMessage(str, false, renderer, font);
 		SDL_Delay(3000);
 	}

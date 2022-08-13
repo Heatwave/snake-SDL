@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Target.cpp" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constants.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="Target.h" />
