@@ -24,4 +24,11 @@ enum Direction
 	RIGHT
 };
 
+enum GameState
+{
+	GAME_STATE_RUNNING,
+	GAME_STATE_ROUND_FINISHED,
+	GAME_STATE_EXITED
+};
+
 #endif // !CONSTANTS_H

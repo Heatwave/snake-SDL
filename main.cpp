@@ -7,19 +7,22 @@
 #include "utils.h"
 #include "Score.h"
 #include "Menu.h"
+#include "NameBoard.h"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 TTF_Font* font = nullptr;
 
 bool init();
-void gameLoop();
 void setup(Uint32&);
 void waitingMenuSelection(Menu&);
-void processInput(Snake&, bool&);
+Uint32 gameLoop(GameState&);
+void processInput(Snake&, GameState&);
 void update(Snake&, Target&, Score&, Uint32&);
-bool check(Snake&, bool&);
+bool check(Snake&);
 void render(const Snake&, const Target&);
+void saveScore(Uint32);
+bool isConfirmed(NameBoard&);
 void close();
 
 int main(int argc, char* args[])
@@ -30,9 +33,9 @@ int main(int argc, char* args[])
 		return -1;
 	}
 
-	bool exit = false;
+	GameState gameState = GAME_STATE_RUNNING;
 
-	while (exit == false)
+	while (gameState != GAME_STATE_EXITED)
 	{
 		Menu menu;
 		menu.render(renderer, font);
@@ -42,14 +45,22 @@ int main(int argc, char* args[])
 		switch (menu.getCurrentSelection())  // NOLINT(clang-diagnostic-switch-enum)
 		{
 		case MENU_START_GAME:
-			gameLoop();
+		{
+			auto score = gameLoop(gameState);
+			if (gameState == GAME_STATE_ROUND_FINISHED)
+			{
+				saveScore(score);
+			}
 			break;
+		}
 		case MENU_HIGH_SCORES:
 			break;
 		default:
-			exit = true;
+			gameState = GAME_STATE_EXITED;
 			break;
 		}
+
+		SDL_Delay(50);
 	}
 
 	close();
@@ -133,7 +144,7 @@ void waitingMenuSelection(Menu& menu)
 			menu.setCurrentSelection(MENU_EXIT);
 			return;
 		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_RETURN)
+			if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE)
 			{
 				return;
 			}
@@ -161,33 +172,37 @@ void waitingMenuSelection(Menu& menu)
 	}
 }
 
-void gameLoop()
+Uint32 gameLoop(GameState& gameState)
 {
 	Snake snake;
 	Target target(&snake);
 	Score score;
 
-	bool gameRunning = true;
+	gameState = GAME_STATE_RUNNING;
 	Uint32 lastFrameTime = 0;
-	bool lose = false;
 
 	setup(lastFrameTime);
 
-	while (gameRunning == true)
+	while (gameState == GAME_STATE_RUNNING)
 	{
-		processInput(snake, gameRunning);
+		processInput(snake, gameState);
 		update(snake, target, score, lastFrameTime);
-		lose = check(snake, gameRunning);
+		if (check(snake) == true)
+		{
+			gameState = GAME_STATE_ROUND_FINISHED;
+		}
 		render(snake, target);
 	}
 
-	if (lose == true)
+	if (gameState == GAME_STATE_ROUND_FINISHED)
 	{
 		char str[50];
 		snprintf(str, 50, "Your score: %d", score.getScore());  // NOLINT(cert-err33-c)
 		showMessage(str, false, renderer, font);
 		SDL_Delay(3000);
 	}
+
+	return score.getScore();
 }
 
 void setup(Uint32& lastFrameTime)
@@ -195,7 +210,7 @@ void setup(Uint32& lastFrameTime)
 	lastFrameTime = SDL_GetTicks();
 }
 
-void processInput(Snake& snake, bool& gameRunning)
+void processInput(Snake& snake, GameState& gameState)
 {
 	SDL_Event event;
 	SDL_PollEvent(&event);
@@ -203,12 +218,12 @@ void processInput(Snake& snake, bool& gameRunning)
 	switch (event.type)
 	{
 	case SDL_QUIT:
-		gameRunning = false;
+		gameState = GAME_STATE_EXITED;
 		break;
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			gameRunning = false;
+			gameState = GAME_STATE_EXITED;
 		}
 
 		if (event.key.keysym.sym == SDLK_DOWN && snake.getDirection() != UP)
@@ -260,7 +275,7 @@ void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 	}
 }
 
-bool check(Snake& snake, bool& gameRunning)
+bool check(Snake& snake)
 {
 	const Pos head = snake.getHeadPos();
 
@@ -269,13 +284,11 @@ bool check(Snake& snake, bool& gameRunning)
 		head.y >= WINDOW_HEIGHT ||
 		head.y <= 0)
 	{
-		gameRunning = false;
 		return true;
 	}
 
 	if (snake.checkHeadBodyCollision() == true)
 	{
-		gameRunning = false;
 		return true;
 	}
 
@@ -291,6 +304,60 @@ void render(const Snake& snake, const Target& target)
 	target.render(renderer);
 
 	SDL_RenderPresent(renderer);
+}
+
+void saveScore(Uint32 score)
+{
+	NameBoard nameBoard;
+	nameBoard.render(renderer, font);
+
+	auto confirmed = isConfirmed(nameBoard);
+
+	if (confirmed == false)
+	{
+		return;
+	}
+}
+
+bool isConfirmed(NameBoard& nameBoard)
+{
+	SDL_PumpEvents();
+	SDL_FlushEvent(SDL_KEYDOWN);
+
+	SDL_Event event;
+
+	while (true)
+	{
+		SDL_PollEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			return false;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE)
+			{
+				return false;
+			}
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				return false;
+			}
+			if (event.key.keysym.sym == SDLK_UP)
+			{
+				break;
+			}
+			if (event.key.keysym.sym == SDLK_DOWN)
+			{
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+
+		nameBoard.render(renderer, font);
+	}
 }
 
 void close()
