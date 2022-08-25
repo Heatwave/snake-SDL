@@ -337,7 +337,24 @@ bool isConfirmed(NameBoard& nameBoard)
 		case SDL_KEYDOWN:
 			if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE)
 			{
-				return false;
+				auto selection = nameBoard.getSelection();
+				if (selection < ALPHABET_SIZE)
+				{
+					nameBoard.appendToName();
+				}
+				else if (selection == ALPHABET_SIZE)
+				{
+					nameBoard.backspaceName();
+				}
+				else if (selection == ALPHABET_SIZE + 1)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+				break;
 			}
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
@@ -345,10 +362,22 @@ bool isConfirmed(NameBoard& nameBoard)
 			}
 			if (event.key.keysym.sym == SDLK_UP)
 			{
+				nameBoard.changeCurrentPos(0, -1);
 				break;
 			}
 			if (event.key.keysym.sym == SDLK_DOWN)
 			{
+				nameBoard.changeCurrentPos(0, 1);
+				break;
+			}
+			if (event.key.keysym.sym == SDLK_LEFT)
+			{
+				nameBoard.changeCurrentPos(-1, 0);
+				break;
+			}
+			if (event.key.keysym.sym == SDLK_RIGHT)
+			{
+				nameBoard.changeCurrentPos(1, 0);
 				break;
 			}
 			break;
