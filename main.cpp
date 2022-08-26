@@ -317,6 +317,8 @@ void saveScore(Uint32 score)
 	{
 		return;
 	}
+
+	auto name = nameBoard.getName();
 }
 
 bool isConfirmed(NameBoard& nameBoard)
@@ -348,7 +350,14 @@ bool isConfirmed(NameBoard& nameBoard)
 				}
 				else if (selection == ALPHABET_SIZE + 1)
 				{
-					return true;
+					if (nameBoard.isNameEmpty() == true)
+					{
+						break;
+					}
+					else
+					{
+						return true;
+					}
 				}
 				else
 				{

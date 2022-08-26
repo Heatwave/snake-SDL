@@ -207,7 +207,17 @@ void NameBoard::render(SDL_Renderer* renderer, TTF_Font* font)
 	SDL_DestroyTexture(cancelTexture);
 }
 
-size_t NameBoard::getSelection()
+bool NameBoard::isNameEmpty() const
+{
+	return this->name.empty();
+}
+
+std::string NameBoard::getName() const
+{
+	return this->name;
+}
+
+size_t NameBoard::getSelection() const
 {
 	return this->selection;
 }

@@ -27,7 +27,11 @@ public:
 
 	void render(SDL_Renderer*, TTF_Font*);
 
-	size_t getSelection();
+	bool isNameEmpty() const;
+
+	std::string getName() const;
+
+	size_t getSelection() const;
 
 private:
 	Pos current = { 0,0 };
