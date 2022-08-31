@@ -36,6 +36,9 @@
     <ClCompile Include="NameBoard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ScoreBoard.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constants.h">
@@ -57,6 +60,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="NameBoard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreBoard.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

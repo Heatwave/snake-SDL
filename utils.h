@@ -9,5 +9,6 @@
 bool checkPosOverlap(Pos, Pos);
 int floorInt(int, int);
 void showMessage(const char*, bool, SDL_Renderer*, TTF_Font*);
+char* readFromFile(const char*);
 
 #endif // !SNAKE_UTILS_H

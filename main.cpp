@@ -8,6 +8,7 @@
 #include "Score.h"
 #include "Menu.h"
 #include "NameBoard.h"
+#include "ScoreBoard.h"
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
@@ -23,6 +24,7 @@ bool check(Snake&);
 void render(const Snake&, const Target&);
 void saveScore(Uint32);
 bool isConfirmed(NameBoard&);
+void showHighScores(GameState&);
 void close();
 
 int main(int argc, char* args[])
@@ -54,6 +56,7 @@ int main(int argc, char* args[])
 			break;
 		}
 		case MENU_HIGH_SCORES:
+			showHighScores(gameState);
 			break;
 		default:
 			gameState = GAME_STATE_EXITED;
@@ -395,6 +398,45 @@ bool isConfirmed(NameBoard& nameBoard)
 		}
 
 		nameBoard.render(renderer, font);
+	}
+}
+
+void showHighScores(GameState& gameState)
+{
+	auto scores = readFromFile(SCORES_FILE_NAME);
+	ScoreBoard scoreBoard;
+	scoreBoard.readFileToScores(scores);
+	free(scores);
+
+	scoreBoard.render(renderer, font);
+
+	SDL_PumpEvents();
+	SDL_FlushEvent(SDL_KEYDOWN);
+
+	SDL_Event event;
+
+	while (true)
+	{
+		SDL_PollEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			gameState = GAME_STATE_EXITED;
+			return;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_RETURN ||
+				event.key.keysym.sym == SDLK_SPACE ||
+				event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				return;
+			}
+			break;
+		default:
+			break;
+		}
+
+		scoreBoard.render(renderer, font);
 	}
 }
 

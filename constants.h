@@ -11,6 +11,8 @@
 #define FPS 30
 #define FRAME_TARGET_TIME (1000 / FPS)
 
+#define SCORES_FILE_NAME "scores"
+
 typedef struct Pos
 {
 	int x, y;
