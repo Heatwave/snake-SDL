@@ -19,12 +19,13 @@ void setup(Uint32&);
 void waitingMenuSelection(Menu&);
 Uint32 gameLoop(GameState&);
 void processInput(Snake&, GameState&);
-void update(Snake&, Target&, Score&, Uint32&);
+void update(Snake&, Target&, Uint32&, Uint32&);
 bool check(Snake&);
 void render(const Snake&, const Target&);
-void saveScore(Uint32);
+std::string getNameFromBoard();
+void saveScore(Score&, std::string);
 bool isConfirmed(NameBoard&);
-void showHighScores(GameState&);
+void showHighScores(GameState&, Score&);
 void close();
 
 int main(int argc, char* args[])
@@ -39,6 +40,7 @@ int main(int argc, char* args[])
 
 	while (gameState != GAME_STATE_EXITED)
 	{
+		Score scoreCls;
 		Menu menu;
 		menu.render(renderer, font);
 
@@ -49,14 +51,16 @@ int main(int argc, char* args[])
 		case MENU_START_GAME:
 		{
 			auto score = gameLoop(gameState);
-			if (gameState == GAME_STATE_ROUND_FINISHED)
+			if (gameState == GAME_STATE_ROUND_FINISHED && score != 0)
 			{
-				saveScore(score);
+				auto name = getNameFromBoard();
+				scoreCls.setScore(score);
+				saveScore(scoreCls, name);
 			}
 			break;
 		}
 		case MENU_HIGH_SCORES:
-			showHighScores(gameState);
+			showHighScores(gameState, scoreCls);
 			break;
 		default:
 			gameState = GAME_STATE_EXITED;
@@ -179,7 +183,7 @@ Uint32 gameLoop(GameState& gameState)
 {
 	Snake snake;
 	Target target(&snake);
-	Score score;
+	Uint32 score = 0;
 
 	gameState = GAME_STATE_RUNNING;
 	Uint32 lastFrameTime = 0;
@@ -200,12 +204,12 @@ Uint32 gameLoop(GameState& gameState)
 	if (gameState == GAME_STATE_ROUND_FINISHED)
 	{
 		char str[50];
-		snprintf(str, 50, "Your score: %d", score.getScore());  // NOLINT(cert-err33-c)
+		snprintf(str, 50, "Your score: %d", score);  // NOLINT(cert-err33-c)
 		showMessage(str, false, renderer, font);
 		SDL_Delay(3000);
 	}
 
-	return score.getScore();
+	return score;
 }
 
 void setup(Uint32& lastFrameTime)
@@ -251,7 +255,7 @@ void processInput(Snake& snake, GameState& gameState)
 	}
 }
 
-void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
+void update(Snake& snake, Target& target, Uint32& score, Uint32& lastFrameTime)
 {
 	const int time2wait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
 
@@ -270,7 +274,7 @@ void update(Snake& snake, Target& target, Score& score, Uint32& lastFrameTime)
 	{
 		snake.appendHead(target.getPos());
 		target.randomPos();
-		score.incrementScore();
+		score += 1;
 	}
 	else
 	{
@@ -309,7 +313,7 @@ void render(const Snake& snake, const Target& target)
 	SDL_RenderPresent(renderer);
 }
 
-void saveScore(Uint32 score)
+std::string getNameFromBoard()
 {
 	NameBoard nameBoard;
 	nameBoard.render(renderer, font);
@@ -318,10 +322,28 @@ void saveScore(Uint32 score)
 
 	if (confirmed == false)
 	{
+		return "";
+	}
+
+	return nameBoard.getName();
+}
+
+void saveScore(Score& score, std::string name)
+{
+	if (name.empty())
+	{
 		return;
 	}
 
-	auto name = nameBoard.getName();
+	score.clearScores();
+	auto fileContent = readFromFile(SCORES_FILE_NAME);
+	score.readFileToScores(fileContent);
+	free(fileContent);
+
+	score.addNewName(name);
+	auto content = score.getScoresContent();
+
+	write2File(SCORES_FILE_NAME, content.c_str());
 }
 
 bool isConfirmed(NameBoard& nameBoard)
@@ -401,14 +423,17 @@ bool isConfirmed(NameBoard& nameBoard)
 	}
 }
 
-void showHighScores(GameState& gameState)
+void showHighScores(GameState& gameState, Score& score)
 {
-	auto scores = readFromFile(SCORES_FILE_NAME);
-	ScoreBoard scoreBoard;
-	scoreBoard.readFileToScores(scores);
-	free(scores);
+	score.clearScores();
+	auto fileContent = readFromFile(SCORES_FILE_NAME);
+	score.readFileToScores(fileContent);
+	free(fileContent);
 
-	scoreBoard.render(renderer, font);
+	auto scores = score.getScores();
+
+	ScoreBoard scoreBoard;
+	scoreBoard.render(renderer, font, scores);
 
 	SDL_PumpEvents();
 	SDL_FlushEvent(SDL_KEYDOWN);
@@ -435,8 +460,6 @@ void showHighScores(GameState& gameState)
 		default:
 			break;
 		}
-
-		scoreBoard.render(renderer, font);
 	}
 }
 

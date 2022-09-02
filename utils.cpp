@@ -70,3 +70,18 @@ char* readFromFile(const char* filename)
 	res[nb_read_total] = '\0';
 	return res;
 }
+
+void write2File(const char* filename, const char* str)
+{
+	SDL_RWops* rw = SDL_RWFromFile(filename, "w");
+	if (rw != NULL) {
+		size_t len = SDL_strlen(str);
+		if (SDL_RWwrite(rw, str, 1, len) != len) {
+			SDL_Log("Couldn't fully write string\n");
+		}
+		else {
+			SDL_Log("Wrote %d 1-byte blocks\n", len);
+		}
+		SDL_RWclose(rw);
+	}
+}
