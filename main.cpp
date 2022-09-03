@@ -337,8 +337,11 @@ void saveScore(Score& score, std::string name)
 
 	score.clearScores();
 	auto fileContent = readFromFile(SCORES_FILE_NAME);
-	score.readFileToScores(fileContent);
-	free(fileContent);
+	if (fileContent != NULL)
+	{
+		score.readFileToScores(fileContent);
+		free(fileContent);
+	}
 
 	score.addNewName(name);
 	auto content = score.getScoresContent();
@@ -427,8 +430,11 @@ void showHighScores(GameState& gameState, Score& score)
 {
 	score.clearScores();
 	auto fileContent = readFromFile(SCORES_FILE_NAME);
-	score.readFileToScores(fileContent);
-	free(fileContent);
+	if (fileContent != NULL)
+	{
+		score.readFileToScores(fileContent);
+		free(fileContent);
+	}
 
 	auto scores = score.getScores();
 
