@@ -5,7 +5,7 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-#define FONT_FILE_NAME "arial.ttf"
+#define FONT_FILE_NAME "fonts/BebasNeue-Regular.ttf"
 #define FONT_SIZE_PT 36
 
 #define FPS 30
